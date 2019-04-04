@@ -6,12 +6,15 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  TextInput,
+  Button,
+  TouchableHighlight,
+  Alert
 } from 'react-native';
 import Image from 'react-native-remote-svg';
 import checkIcon from './assets/checked.svg';
 import cancelIcon from './assets/cancel.svg';
 import Card from "./Card";
-import Login from "./Login";
 import img1 from './assets/image1.jpeg';
 import img2 from './assets/image2.jpeg';
 import img3 from './assets/image3.jpeg';
@@ -42,14 +45,21 @@ const getCards = () => {
 
 export default class App extends React.Component {
 
-  constructor() {
-    super();
-
+  constructor(props) {
+    super(props);
+    stage = {
+      username : '',
+      password: '',
+    }
     const cards = getCards();
     const is_login = false;
 
     this.state = {cards, is_login};
   }
+
+  onClickListener = (viewId) => {
+    this.setState({is_login:true})
+    }
 
   onCardSwiped = (id) => {
     this.setState(prevState => {
@@ -106,8 +116,10 @@ export default class App extends React.Component {
   render() {
     if(this.state.is_login){
     return (
+
       <View style={styles.container} >
         <View style={styles.cardArea} >
+          <Text>{this.state.is_login}</Text>
           {this.renderCards(this.state.cards)}
         </View>
         <View style={styles.btnContainer}>
@@ -119,15 +131,57 @@ export default class App extends React.Component {
           </TouchableOpacity>
         </View>
       </View>
+      
     );
   }
   else{
-    return (<div/>)
+    
+    return (           
+    <View style={styles.loginContainer}>
+      <View style={styles.inputContainer}>
+        <Text>{this.state.is_login}</Text>
+        <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/message/ultraviolet/50/3498db'}}/>
+        <TextInput style={styles.inputs}
+            placeholder="username"
+            keyboardType="email-address"
+            underlineColorAndroid='transparent'
+            onChangeText={(username) => this.setState({username})}/>
+      </View>
+      
+      <View style={styles.inputContainer}>
+        <Image style={styles.inputIcon} source={{uri: 'https://png.icons8.com/key-2/ultraviolet/50/3498db'}}/>
+        <TextInput style={styles.inputs}
+            placeholder="Password"
+            secureTextEntry={true}
+            underlineColorAndroid='transparent'
+            onChangeText={(password) => this.setState({password})}/>
+      </View>
+
+      <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => this.onClickListener('login')}>
+        <Text style={styles.loginText}>Login</Text>
+      </TouchableHighlight>
+
+      <TouchableHighlight style={styles.buttonContainer} onPress={() => this.onClickListener('restore_password')}>
+          <Text>Forgot your password?</Text>
+      </TouchableHighlight>
+
+      <TouchableHighlight style={styles.buttonContainer} onPress={() => this.onClickListener('register')}>
+          <Text>Register</Text>
+      </TouchableHighlight>
+    </View>
+    
+    )
   }
 }
 }
 
 const styles = StyleSheet.create({
+  loginContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#DCDCDC',
+  },
   container: {
     flex: 1,
     flexDirection: 'column',
@@ -146,17 +200,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: -1,
   },
+  inputContainer: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
+    borderRadius:30,
+    borderBottomWidth: 1,
+    width:250,
+    height:45,
+    marginBottom:20,
+    flexDirection: 'row',
+    alignItems:'center'
+},
+inputs:{
+    height:45,
+    marginLeft:16,
+    borderBottomColor: '#FFFFFF',
+    flex:1,
+},
+inputIcon:{
+  width:30,
+  height:30,
+  marginLeft:15,
+  justifyContent: 'center'
+},
+buttonContainer: {
+  height:45,
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom:20,
+  width:250,
+  borderRadius:30,
+},
+loginButton: {
+  backgroundColor: "#00b5ec",
+},
+loginText: {
+  color: 'white',
+},
   btn: {
-    height: 70,
-    width: 70,
-    borderRadius: 35,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 15,
-    backgroundColor: '#efefef',
-  },
+      height: 70,
+      width: 70,
+      borderRadius: 35,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 15,
+      backgroundColor: '#efefef',
+    },
   btnIcon: {
-    height: 25,
-    width: 25,
-  },
+      height: 25,
+      width: 25,
+    },
 });
