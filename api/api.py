@@ -24,5 +24,25 @@ def init():
             success=False)
 
 
+@app.route('/products', methods=['GET', 'POST', 'PUT'])
+def products():
+    if request.method == 'GET':
+        return "GET\n"
+    elif request.method == 'POST':
+        return "POST\n"
+    elif request.method == 'PUT':
+        return "\PUT"
+
+
+@app.route('/products/<product_id>/like', methods=['POST'])
+def like_product(product_id):
+    return "POST {0}\n".format(product_id)
+
+
+@app.route('/users', methods=['GET'])
+def like_product():
+    return "GET\n"
+
+
 def run():
     app.run(host=conf.HOST, port=conf.PORT)
