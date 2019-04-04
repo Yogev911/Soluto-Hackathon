@@ -50,6 +50,7 @@ class DbClient:
 
 if __name__ == '__main__':
     db_client = DbClient()
+    db_client.get_user_by_id("5ca6607ab7635f3de065ad63")
 # print(db_client.get_products())
 # print(db_client.get_user_by_email('amiravrm@gmail.com'))
 # print(db_client.get_user_by_id('5ca66093b7635f3de065ad64'))

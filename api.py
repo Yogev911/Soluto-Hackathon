@@ -9,7 +9,7 @@ from backend.resources.products import Products
 from backend.resources.users import Users
 >>>>>>> login_backend:backend/api.py
 from backend.resources.login.login import Login
-from backend.resources.products import Products, ProductsLikes
+from backend.resources.products.products import Products, ProductsLikes
 from backend.resources.users import Users
 
 app = Flask(__name__)
