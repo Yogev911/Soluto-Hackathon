@@ -3,15 +3,16 @@ import json
 from flask_cors import CORS
 from flask import Flask, request, jsonify
 import traceback
-
+from flask_restful_swagger_2 import Api
 import api_handler
 import conf
 import utils
 
-app = Flask(__name__)
+
+app = Api(__name__)
 CORS(app)
 
-
+app.add_resource(Products,"/products")
 @app.route('/init', methods=['GET', 'POST'])
 def init():
     try:
