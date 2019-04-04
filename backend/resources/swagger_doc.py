@@ -6,6 +6,7 @@ products_post = {
                 'name': 'body',
                 'description': 'Request body',
                 'in': 'body',
+                'schema' : 'string',
                 'required': True,
             }
         ],
