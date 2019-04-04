@@ -5,118 +5,140 @@ import {
     TouchableOpacity,
     Animated,
     Dimensions,
+    Text
 } from 'react-native';
 import Image from 'react-native-remote-svg';
 import checkIcon from '../assets/checked.svg';
 import cancelIcon from '../assets/cancel.svg';
 import Card from "../Card";
-import img1 from '../assets/image1.jpeg';
-import img2 from '../assets/image2.jpeg';
-import img3 from '../assets/image3.jpeg';
-import img4 from '../assets/image4.jpeg';
-import img5 from '../assets/image5.jpeg';
 import EmptyState from '../EmptyState';
+import { ProductService } from '../services/product-service'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const getCards = () => {
-    const cards = [
-        { id: '1', image: img1, isActive: true },
-        { id: '2', image: img2, isActive: false },
-        { id: '3', image: img3, isActive: false },
-        { id: '4', image: img4, isActive: false },
-        { id: '5', image: img5, isActive: false },
-    ];
-    let lastItemPosition = false;
-    cards.forEach((card, i) => {
-        const position = new Animated.ValueXY();
-        card.position = position;
-        card.parentPosition = lastItemPosition;
-        lastItemPosition = position;
-    });
-    return cards;
-}
+// const getproducts = () => {
+//     const products = [
+//         { id: '1', image: img1, isActive: true },
+//         { id: '2', image: img2, isActive: false },
+//         { id: '3', image: img3, isActive: false },
+//         { id: '4', image: img4, isActive: false },
+//         { id: '5', image: img5, isActive: false },
+//     ];
+//     let lastItemPosition = false;
+//     products.forEach((card, i) => {
+//         const position = new Animated.ValueXY();
+//         card.position = position;
+//         card.parentPosition = lastItemPosition;
+//         lastItemPosition = position;
+//     });
+//     return products;
+// }
 
 export default class SwipePage extends React.Component {
 
     constructor() {
         super();
-
-        const cards = getCards();
-        const is_login = false;
-
-        this.state = { cards, is_login };
+        this.state = { isLoading: true, products: [] };
+        this.productService = new ProductService();
     }
 
-    onCardSwiped = (id) => {
+    async fetchProducts(){
+        this.setState({ isLoading: true });
+
+        return this.productService.getProducts().then((products) => {
+            let lastItemPosition = false;
+            products.forEach((product, i) => {
+                const position = new Animated.ValueXY();
+                product.position = position;
+                product.parentPosition = lastItemPosition;
+                lastItemPosition = position;
+            });
+            this.setState({
+                isLoading: false,
+                products: products
+            })
+        })
+    }
+
+    componentDidMount() {
+        this.fetchProducts();
+    }
+
+    onProductSwiped = (id) => {
         this.setState(prevState => {
-            const swipedIndex = prevState.cards.findIndex(card => card.id === id);
-            const isLastIndex = swipedIndex === (prevState.cards.length - 1);
+            const swipedIndex = prevState.products.findIndex(card => card.id === id);
+            const isLastIndex = swipedIndex === (prevState.products.length - 1);
             const nextIndex = swipedIndex + 1;
             const newState = { ...prevState };
-            newState.cards[swipedIndex]['isActive'] = false;
+            newState.products[swipedIndex]['isActive'] = false;
             if (isLastIndex) return prevState;
-            newState.cards[nextIndex]['isActive'] = true;
+            newState.products[nextIndex]['isActive'] = true;
             return newState;
         });
     }
 
     handleNopeSelect = (dy = 0, position = false) => {
-        const activeIndex = this.state.cards.findIndex(card => card.isActive);
+        const activeIndex = this.state.products.findIndex(card => card.isActive);
         if (activeIndex < 0) return;
         if (!position) {
-            position = this.state.cards[activeIndex].position;
+            position = this.state.products[activeIndex].position;
         }
         Animated.spring(position, {
             toValue: { x: SCREEN_WIDTH + 100, y: dy }
-        }).start(this.onCardSwiped(this.state.cards[activeIndex].id));
+        }).start(this.onProductSwiped(this.state.products[activeIndex].id));
     }
 
     handleLikeSelect = (dy = 0, position = false) => {
-        const activeIndex = this.state.cards.findIndex(card => card.isActive);
+        const activeIndex = this.state.products.findIndex(card => card.isActive);
         if (activeIndex < 0) return;
         if (!position) {
-            position = this.state.cards[activeIndex].position;
+            position = this.state.products[activeIndex].position;
         }
         Animated.spring(position, {
             toValue: { x: -SCREEN_WIDTH - 100, y: dy }
-        }).start(this.onCardSwiped(this.state.cards[activeIndex].id));
+        }).start(this.onProductSwiped(this.state.products[activeIndex].id));
     }
 
-    renderCards = (cards) => {
-        if (this.isEmptyState()) return <EmptyState reloadCards={this.reloadCards} />
+    renderProducts = (products) => {
+        if (this.isEmptyState()) return <EmptyState reloadProducts={this.reloadProducts} />
 
-        return cards.map((card, index) => {
+        return products.map((card, index) => {
             return <Card key={card.id} {...card} handleNopeSelect={this.handleNopeSelect} handleLikeSelect={this.handleLikeSelect} />;
         }).reverse();
     }
 
-    reloadCards = () => {
-        const cards = getCards();
-        this.setState({ cards });
+    reloadProducts = () => {
+        this.fetchProducts();
     }
 
     isEmptyState = () => {
-        return this.state.cards.findIndex(card => card.isActive) < 0;
+        return this.state.products.findIndex(card => card.isActive) < 0;
     }
 
     render() {
-        return (
-            <View style={styles.container} >
-                <View style={styles.cardArea} >
-                    {this.renderCards(this.state.cards)}
+        if (this.state.isLoading) {
+            return (
+                <Text>Loading Gifts...</Text>
+            )
+        } else {
+            return (
+                <View style={styles.container} >
+                    <View style={styles.cardArea} >
+                        {this.renderProducts(this.state.products)}
+                    </View>
+                    <View style={styles.btnContainer}>
+                        <TouchableOpacity style={styles.btn} onPress={() => this.handleLikeSelect()} >
+                            <Image source={checkIcon} style={styles.btnIcon} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.btn} onPress={() => this.handleNopeSelect()} >
+                            <Image source={cancelIcon} style={styles.btnIcon} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View style={styles.btnContainer}>
-                    <TouchableOpacity style={styles.btn} onPress={() => this.handleLikeSelect()} >
-                        <Image source={checkIcon} style={styles.btnIcon} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.btn} onPress={() => this.handleNopeSelect()} >
-                        <Image source={cancelIcon} style={styles.btnIcon} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-        );
+            );
+        }
+
     }
 }
 
