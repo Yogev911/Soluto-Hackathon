@@ -13,6 +13,5 @@ api = Api(app, api_version='0.1')
 api.add_resource(Products,"/products")
 
 
-
-def run():
+if __name__ == '__main__':
     app.run(host=conf.HOST, port=conf.PORT)
