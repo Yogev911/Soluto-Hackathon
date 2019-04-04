@@ -8,11 +8,11 @@ import api_handler
 import conf
 import utils
 
-
-app = Api(__name__)
+app = Flask(__name__)
 CORS(app)
+api = Api(app, api_version='0.1')
 
-app.add_resource(Products,"/products")
+api.add_resource(Products,"/products")
 @app.route('/init', methods=['GET', 'POST'])
 def init():
     try:
