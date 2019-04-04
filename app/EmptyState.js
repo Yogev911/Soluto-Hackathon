@@ -16,9 +16,9 @@ export default class App extends React.Component {
           <Image source={zzzIcon} style={styles.zzz} />
         </View>
         <Text style={styles.heading} >That's all folks...</Text>
-        <Text style={styles.caption} >No more cards to display.</Text>
-        <TouchableOpacity onPress={() => this.props.reloadCards()} >
-          <Text style={styles.btn} >RELOAD CARDS</Text>
+        <Text style={styles.caption} >No more gifts to display.</Text>
+        <TouchableOpacity onPress={() => this.props.reloadProducts()} >
+          <Text style={styles.btn} >RELOAD GIFTS</Text>
         </TouchableOpacity>
       </View>
     );

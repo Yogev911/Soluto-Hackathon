@@ -1,4 +1,3 @@
-
 export class User {
     name;
     phoneNumber;
@@ -14,10 +13,8 @@ export class User {
     }
 }
 
-
-
 export class UserService {
-
+    baseUrl = '/users';
     static users = [];
 
     async register(user){
