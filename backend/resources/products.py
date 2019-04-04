@@ -8,3 +8,33 @@ class Products(Resource):
     @swagger.doc(products_post)
     def post(self):
         return service.BLA
+
+    @swagger.doc(products_post)
+    def get(self):
+        return service.BLA
+
+    @swagger.doc(products_post)
+    def put(self):
+        return service.BLA
+
+    @swagger.doc(products_post)
+    def delete(self):
+        return service.BLA
+
+
+class Product(Resource):
+    @swagger.doc(products_post)
+    def post(self):
+        return service.BLA
+
+    @swagger.doc(products_post)
+    def get(self):
+        return service.BLA
+
+    @swagger.doc(products_post)
+    def put(self):
+        return service.BLA
+
+    @swagger.doc(products_post)
+    def delete(self):
+        return service.BLA
