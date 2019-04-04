@@ -11,7 +11,14 @@ export default class App extends React.Component {
 
   onClickListener = (viewId) => {
     this.setState({is_login:true})
+    this.onLogin = this.onLogin.bind(this)
     }
+
+    onLogin = (username, password) => {
+      if(username!=''&& password!=''){
+          this.setState({is_login:true})
+      }
+  }
   
   render() {
     if(this.state.is_login){
@@ -21,7 +28,7 @@ export default class App extends React.Component {
     }
     else{
       return(
-        <LoginPage onClickListener={this.onClickListener}/>
+        <LoginPage onLogin={this.onLogin}/>
       )
     }
   }
