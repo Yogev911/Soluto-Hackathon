@@ -11,7 +11,7 @@ CORS(app)
 api = Api(app, api_version='0.1')
 
 api.add_resource(Products, "/products")
-api.add_resource(Product, "/products/<product_id>/like")
+api.add_resource(Product, "/product/<int: product_id>/like")
 api.add_resource(Users, "/users")
 
 if __name__ == '__main__':

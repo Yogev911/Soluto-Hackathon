@@ -24,17 +24,17 @@ class Products(Resource):
 
 class Product(Resource):
     @swagger.doc(products_post)
-    def post(self):
-        return service.BLA
+    def post(self, product_id):
+        return f"item {product_id}", 200
 
     @swagger.doc(products_post)
-    def get(self):
-        return service.BLA
+    def get(self, product_id):
+        return f"item {product_id}", 200
 
     @swagger.doc(products_post)
-    def put(self):
-        return service.BLA
+    def put(self, product_id):
+        return f"item {product_id}", 200
 
     @swagger.doc(products_post)
-    def delete(self):
-        return service.BLA
+    def delete(self, product_id):
+        return f"item {product_id}", 200
