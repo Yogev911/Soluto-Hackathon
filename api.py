@@ -4,7 +4,7 @@ from flask_restful_swagger_2 import Api
 
 from backend import conf
 from backend.resources.login.login import Login
-from backend.resources.products import Products, ProductsLikes
+from backend.resources.products.products import Products, ProductsLikes
 from backend.resources.users import Users
 
 app = Flask(__name__)

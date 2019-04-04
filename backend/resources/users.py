@@ -1,7 +1,7 @@
 from flask_restful_swagger_2 import Resource, swagger
 
 from backend.resources import service
-from backend.resources.swagger_doc import users_post
+from backend.resources.products.swagger_doc import users_post
 
 
 class Users(Resource):
