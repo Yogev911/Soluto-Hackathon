@@ -1,91 +1,60 @@
-import mysql.connector
-import traceback
-import conf
-from os import listdir
-from os.path import isfile
-import os
-import utils
+from bson import ObjectId
+from pymongo import MongoClient
+
+client = MongoClient("mongodb+srv://app:Password1@cluster0-yyeld.mongodb.net/test?retryWrites=true")
 
 
-class DB_Handler(object):
-    # __metaclass__ = Singleton
+class DbClient:
+    db = client["tradeit"]
 
-    def __init__(self):
-        self._user = 'root'
-        self._password = ''
-        self._host = 'localhost'
-        self._database = 'matrix'
-        self._port = '3306'
-        self.cnx = self.connect()
+    users = db['Users']
+    products = db['Products']
+    matches = db['Matches']
 
-    def connect(self):
-        try:
-            return mysql.connector.connect(user=self._user,
-                                           password=self._password,
-                                           host=self._host,
-                                           database=self._database,
-                                           port=self._port)
-        except:
-            print('Error connecting to DB')
-            raise
+    def get_user_by_email(self, email):
+        return self.users.find_one({'email': email})
 
-    def disconnect(self):
-        if self.cnx:
-            self.cnx.close()
+    def get_user_by_id(self, user_id):
+        return self.users.find_one({'_id': ObjectId(user_id)})
 
-    def get_all_tables(self):
-        query = "SHOW TABLES"
-        cursor = self.cnx.cursor()
-        cursor.execute(query)
-        tables = cursor.fetchall()
-        return tables
+    def get_products(self):
+        products = []
+        for product in self.products.find():
+            products.append(product)
+        return products
 
-    def show_table(self, table_name):
-        query = "SELECT * FROM " + table_name
-        cursor = self.cnx.cursor()
-        cursor.execute(query)
-        tables = cursor.fetchall()
-        return tables
+    def add_product(self, user_id, product):
+        product_id = self.products.insert_one(product).inserted_id
+        self.users.update_one({'_id': ObjectId(user_id)}, {'$push': {'products': ObjectId(product_id)}})
 
-    def drop_all_tables(self):
-        cursor = self.cnx.cursor()
-        tables_names = self.get_all_tables()
-        for table_name in tables_names:
-            str = ''.join(table_name)
-            try:
-                cursor.execute("drop table " + str)
-            except Exception as e:
-                return utils.create_res_obj({'traceback': traceback.format_exc(),
-                                             'msg': "{}".format(e.args),
-                                             'text': "DROP TABLE failed WITH TABLE {} ".format(str)},
-                                            success=False)
+    def remove_product(self, user_id, product_id):
+        self.products.update_one({'_id': ObjectId(product_id)}, {'sale_state': 'Deleted'})
+        self.users.update_one({'_id': ObjectId(user_id)}, {'$pull': {'products': ObjectId(product_id)}})
 
-    def init_db(self):
-        set_up_querys = ["DELETE FROM `indextable`", "DELETE FROM `doc_tbl`", "DELETE FROM `postfiletable`",
-                         "ALTER TABLE indextable AUTO_INCREMENT = 1", "ALTER TABLE postfiletable AUTO_INCREMENT = 1",
-                         "DELETE FROM `hidden_files`"]
-        for query in set_up_querys:
-            self.run_query(query)
+    def like_product(self, user_id, product_id):
+        self.users.update_one({'_id': ObjectId(user_id)}, {'$push': {'likes': ObjectId(product_id)}})
+        self.products.update_one({'_id': ObjectId(product_id)}, {'$push': {'liked': ObjectId(user_id)}})
 
-    def run_query(self, query, params=None, one=False, many=False, commit=False):
-        '''
-        :param query: SQL string
-        :param params: Tuple of params
-        '''
-        cursor = self.cnx.cursor()
-        if params:
-            cursor.execute(query, params)
-        else:
-            cursor.execute(query)
-        if commit:
-            self.cnx.commit()
-        if one:
-            data = cursor.fetchone()
-            cursor.close()
-            return data
-        elif many:
-            data = cursor.fetchall()
-            cursor.close()
-            return data
-        cursor.close()
-        return None
+    def dislike_product(self, user_id, product_id):
+        self.users.update_one({'_id': ObjectId(user_id)}, {'$push': {'dislikes': ObjectId(product_id)}})
+
+    def add_match(self, first_user, second_user, first_user_product_id, second_user_product_id):
+        self.matches.insert(
+            {'first_user_id': ObjectId(first_user), 'second_user_id': ObjectId(second_user),
+             'first_user_product_id': ObjectId(first_user_product_id),
+             'second_user_product_id': ObjectId(second_user_product_id)})
+
+    def update_product_state(self, product_id, state):
+        self.products.update_one({'_id': ObjectId(product_id)}, {'sale_state': state})
+
+
+if __name__ == '__main__':
+    db_client = DbClient()
+# print(db_client.get_products())
+# print(db_client.get_user_by_email('amiravrm@gmail.com'))
+# print(db_client.get_user_by_id('5ca66093b7635f3de065ad64'))
+# product = {'name': 'test'}
+# db_client.add_product('5ca66093b7635f3de065ad64', product)
+# db_client.like_product('5ca66093b7635f3de065ad64', '5ca662d6b7635f3de065ad6a')
+# db_client.dislike_product('5ca66093b7635f3de065ad64', '5ca662d6b7635f3de065ad6a')
+# db_client.add_match(first_user='5ca66093b7635f3de065ad64', first_user_product_id='5ca662d6b7635f3de065ad6a', second_user="5ca6607ab7635f3de065ad63", second_user_product_id="5ca66431b7635f3de065ad74")
