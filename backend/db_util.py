@@ -46,7 +46,8 @@ class DbClient:
 
     def get_matches(self, user_id):
         matches = []
-        for match in self.matches.find({'$or': [{'first_user_id': user_id}, {'second_user_id': user_id}]}):
+        for match in self.matches.find(
+                {'$or': [{'first_user_id': ObjectId(user_id)}, {'second_user_id': ObjectId(user_id)}]}):
             matches.append(match)
         return matches
 
@@ -57,9 +58,6 @@ class DbClient:
         self.users.insert({'name': user_name, 'email': user_email, 'number': user_number,
                            'likes': [], 'dislikes': [], 'location': [],
                            'products': [], 'radius': radius})
-
-
-
 
 
 if __name__ == '__main__':
