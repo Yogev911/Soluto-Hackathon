@@ -5,7 +5,8 @@ import {
     TouchableOpacity,
     Animated,
     Dimensions,
-    Text
+    Text,
+    Button
 } from 'react-native';
 import Image from 'react-native-remote-svg';
 import checkIcon from '../assets/checked.svg';
@@ -13,34 +14,26 @@ import cancelIcon from '../assets/cancel.svg';
 import Card from "../Card";
 import EmptyState from '../EmptyState';
 import { ProductService } from '../services/product-service'
+import Modal from "react-native-modal";
+import MatchDialog from '../components/match-dealog'
+
+
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
-
-// const getproducts = () => {
-//     const products = [
-//         { id: '1', image: img1, isActive: true },
-//         { id: '2', image: img2, isActive: false },
-//         { id: '3', image: img3, isActive: false },
-//         { id: '4', image: img4, isActive: false },
-//         { id: '5', image: img5, isActive: false },
-//     ];
-//     let lastItemPosition = false;
-//     products.forEach((card, i) => {
-//         const position = new Animated.ValueXY();
-//         card.position = position;
-//         card.parentPosition = lastItemPosition;
-//         lastItemPosition = position;
-//     });
-//     return products;
-// }
 
 export default class SwipePage extends React.Component {
 
     constructor() {
         super();
-        this.state = { isLoading: true, products: [] };
+        this.state = { 
+            isLoading: true, 
+            products: [],
+            matchedProduct: null
+        };
         this.productService = new ProductService();
+        this.closeWon = this.closeWon.bind(this);
+
     }
 
     async fetchProducts(){
@@ -65,6 +58,12 @@ export default class SwipePage extends React.Component {
         this.fetchProducts();
     }
 
+    closeWon() {
+        this.setState({
+            matchedProduct: null
+        })
+    }
+
     onProductSwiped = (id) => {
         this.setState(prevState => {
             const swipedIndex = prevState.products.findIndex(card => card.id === id);
@@ -87,6 +86,8 @@ export default class SwipePage extends React.Component {
         Animated.spring(position, {
             toValue: { x: SCREEN_WIDTH + 100, y: dy }
         }).start(this.onProductSwiped(this.state.products[activeIndex].id));
+
+        this.productService.dislikeProduct(this.state.products[activeIndex].id);
     }
 
     handleLikeSelect = (dy = 0, position = false) => {
@@ -98,6 +99,11 @@ export default class SwipePage extends React.Component {
         Animated.spring(position, {
             toValue: { x: -SCREEN_WIDTH - 100, y: dy }
         }).start(this.onProductSwiped(this.state.products[activeIndex].id));
+
+        this.productService.likeProduct(this.state.products[activeIndex].id);
+        this.setState({
+            matchedProduct: this.state.products[activeIndex]
+        })
     }
 
     renderProducts = (products) => {
@@ -115,6 +121,7 @@ export default class SwipePage extends React.Component {
     isEmptyState = () => {
         return this.state.products.findIndex(card => card.isActive) < 0;
     }
+
 
     render() {
         if (this.state.isLoading) {
@@ -135,6 +142,12 @@ export default class SwipePage extends React.Component {
                             <Image source={cancelIcon} style={styles.btnIcon} />
                         </TouchableOpacity>
                     </View>
+                    <Modal 
+                        isVisible={this.state.matchedProduct != null} 
+                        animationIn='flipInY'
+                        backdropOpacity={0.3}>
+                        <MatchDialog product={this.state.matchedProduct} onClick={this.closeWon}></MatchDialog>
+                    </Modal>
                 </View>
             );
         }
