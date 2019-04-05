@@ -32,7 +32,7 @@ class Products(Resource):
             if product['_id'] not in user['likes'] and product not in user['dislikes'] and \
                     product['_id'] not in user['products']:
                 unseen_products.append(product)
-        return unseen_products[:amount], 200
+        return json.dumps(unseen_products[:amount]), 200
 
     @swagger.doc(products_post)
     def put(self):
