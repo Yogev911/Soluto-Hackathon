@@ -44,6 +44,12 @@ class DbClient:
              'first_user_product_id': ObjectId(first_user_product_id),
              'second_user_product_id': ObjectId(second_user_product_id)})
 
+    def get_matches(self, user_id):
+        matches = []
+        for match in self.matches.find({'$or': [{'first_user_id': user_id}, {'second_user_id': user_id}]}):
+            matches.append(match)
+        return matches
+
     def update_product_state(self, product_id, state):
         self.products.update_one({'_id': ObjectId(product_id)}, {'sale_state': state})
 
@@ -58,7 +64,6 @@ class DbClient:
 
 if __name__ == '__main__':
     db_client = DbClient()
-    db_client.get_user_by_id("5ca6607ab7635f3de065ad63")
 # print(db_client.get_products())
 # print(db_client.get_user_by_email('amiravrm@gmail.com'))
 # print(db_client.get_user_by_id('5ca66093b7635f3de065ad64'))
