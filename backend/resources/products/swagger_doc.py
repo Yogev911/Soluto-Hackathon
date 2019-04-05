@@ -7,7 +7,7 @@ products_post = {
             'description': 'Request body',
             'in': 'body',
             'schema': 'string',
-            'required': True,
+            'required': False,
         }
     ],
     'responses': {
@@ -37,7 +37,7 @@ users_get = {
             'description': 'Request body',
             'in': 'body',
             'schema': 'string',
-            'required': True,
+            'required': False,
         }
     ],
     'responses': {
@@ -56,7 +56,7 @@ users_post = {
             'description': 'Request body',
             'in': 'body',
             'schema': 'string',
-            'required': True,
+            'required': False,
         }
     ],
     'responses': {
@@ -86,14 +86,14 @@ login_post = {
             'description': 'Request users email',
             'in': 'body',
             'schema': 'string',
-            'required': True,
+            'required': False,
         },
         {
             'name': 'password',
             'description': 'Request users password',
             'in': 'body',
             'schema': 'string',
-            'required': True
+            'required': False
         }
     ],
     'responses': {

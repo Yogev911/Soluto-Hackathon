@@ -19,8 +19,17 @@ class Match(Resource):
     @swagger.doc(products_post)
     def get(self):
         user_id = request.headers.get('user_id')
-        matches = db_client.get_matches(user_id)
-        return JSONEncoder().encode(matches), 200
+        item = [self.set_prod(matches) for  matches in db_client.get_matches(user_id)]
+        # matches = self.set_prod(matches)
+        return JSONEncoder().encode(item), 200
+
+    def set_prod(self, matches):
+        matches = {"first_user": db_client.get_user_by_id(str(matches['first_user_id'])),
+                   "second_user": db_client.get_user_by_id(str(matches['second_user_id'])),
+                   "first_user_product": db_client.get_product_by_id(str(matches['first_user_product_id'])),
+                   "second_user_product": db_client.get_product_by_id(str(matches['second_user_product_id']))}
+        return matches
+
     @swagger.doc(products_post)
     def put(self):
         return f"ok", 200
@@ -28,4 +37,3 @@ class Match(Resource):
     @swagger.doc(products_post)
     def delete(self):
         return f"ok", 200
-
