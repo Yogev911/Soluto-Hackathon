@@ -1,5 +1,6 @@
 import json
 
+from bson import json_util
 from flask_restful_swagger_2 import Resource, swagger
 from flask import request
 
@@ -32,7 +33,7 @@ class Products(Resource):
             if product['_id'] not in user['likes'] and product not in user['dislikes'] and \
                     product['_id'] not in user['products']:
                 unseen_products.append(product)
-        return json.dumps(unseen_products[:amount]), 200
+        return json.dumps(json_util.dumps(unseen_products[:amount])), 200
 
     @swagger.doc(products_post)
     def put(self):
