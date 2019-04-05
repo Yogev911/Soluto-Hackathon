@@ -10,12 +10,14 @@ def login(request):
     try:
         res = json.loads(request.data)
         user = bson_to_json(returned_request(res))
-        return (json.dumps(user), 200)
+        return user, 200
+
     except:
         return (("failed to login", 401))
 
 
 def returned_request(res):
+    init = False
     user = DB.get_user_by_email(res["email"])
     if not user:
         add_new_user(res["email"])
