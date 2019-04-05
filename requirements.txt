@@ -3,3 +3,4 @@ flask_restful_swagger_2==0.35
 Flask==1.0.2
 mysql_connector_repackaged==0.3.1
 gunicorn==19.0.0
+pymongo
