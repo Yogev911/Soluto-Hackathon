@@ -17,10 +17,6 @@ class Products(Resource):
 
     @swagger.doc(products_post)
     def get(self):
-        # user = db_client.get_user_by_id(user_id)
-        # products_ids = [prod['id]'] for prod in db_client.get_products()]
-        # f_products = set(products_ids) - set(user['products']) - set(user['likes']) -set(user['dislikes'])
-        # return f_products[:amount] , 200
         data = json.loads(request.data)
         user_id = request.headers.get('user_id')
         amount = data.get('amount', 0)
@@ -60,11 +56,9 @@ class ProductsLikes(Resource):
         user_id = request.headers.get('user_id')
         if like:
             db_client.like_product(user_id, product_id)
-            if True:
-                return "match found with id 34", 200
         else:
             db_client.dislike_product(user_id, product_id)
-        return f"item {product_id} is {'liked!' if like else 'disliked=/'} by user {user_id}", 200
+        return "ok", 200
 
     @swagger.doc(products_post)
     def delete(self, product_id, like):

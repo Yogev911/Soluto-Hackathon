@@ -5,6 +5,7 @@ from flask_restful_swagger_2 import Api
 from backend import conf
 
 from backend.resources.login.login import Login
+from backend.resources.match.products import Match
 from backend.resources.products.products import Products, ProductsLikes
 from backend.resources.users import Users
 
@@ -14,6 +15,7 @@ api = Api(app, api_version='0.1')
 
 api.add_resource(ProductsLikes, "/products/<int:product_id>/<int:like>")
 api.add_resource(Products, "/products")
+api.add_resource(Match, "/match")
 api.add_resource(Users, "/users")
 api.add_resource(Login, "/login")
 
