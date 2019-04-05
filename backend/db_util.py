@@ -44,6 +44,9 @@ class DbClient:
              'first_user_product_id': ObjectId(first_user_product_id),
              'second_user_product_id': ObjectId(second_user_product_id)})
 
+    def get_product_by_id(self, prod_id):
+        return self.products.find_one({'_id': ObjectId(prod_id)})
+
     def get_matches(self, user_id):
         matches = []
         for match in self.matches.find(
