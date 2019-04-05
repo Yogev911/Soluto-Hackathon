@@ -9,9 +9,16 @@ DB = DbClient()
 def login(request):
     try:
         res = json.loads(request.data)
-        user_info = DB.get_user_by_email(res["email"])
-        return ((json.dumps(bson_to_json(user_info)), 200))
+        user = bson_to_json(returned_request(res))
+        return (json.dumps(user), 200)
 
     except:
         return (("failed to login", 401))
 
+
+def returned_request(res):
+    init = False
+    user = DB.get_user_by_email(res["email"])
+    if user:
+        init = True
+    return ({"user": user, "Initial": init})
