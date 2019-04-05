@@ -1,7 +1,6 @@
 import json
 import datetime
-
-from bson import json_util
+from bson import ObjectId
 from flask_restful_swagger_2 import Resource, swagger
 from flask import request
 
@@ -43,7 +42,7 @@ class Products(Resource):
             if product['_id'] not in user['likes'] and product not in user['dislikes'] and \
                     product['_id'] not in user['products']:
                 unseen_products.append(product)
-        return json.dumps(json_util.dumps(unseen_products[:amount])), 200
+        return JSONEncoder().encode(unseen_products[:amount]), 200
 
     @swagger.doc(products_post)
     def put(self):
@@ -52,6 +51,15 @@ class Products(Resource):
     @swagger.doc(products_post)
     def delete(self):
         return f"ok", 200
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        elif isinstance(o, datetime.datetime):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
 
 
 class ProductsLikes(Resource):
