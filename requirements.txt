@@ -7,6 +7,10 @@ newspaper3k==0.2.6
 pymongo
 dnspython
 gunicorn==19.0.0
+bson==0.5.8
+
+
+
 tensorflow
 numpy
 scipy
