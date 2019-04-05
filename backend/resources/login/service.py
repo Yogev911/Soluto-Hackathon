@@ -10,7 +10,7 @@ def login(request):
     try:
         res = json.loads(request.data)
         user = bson_to_json(returned_request(res))
-        return (json.dumps(user), 200)
+        return user, 200
 
     except:
         return (("failed to login", 401))
