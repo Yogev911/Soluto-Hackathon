@@ -6,8 +6,6 @@ from backend import conf
 from backend.resources.login.login import Login
 from backend.resources.products.products import Products, ProductsLikes
 from backend.resources.users.users import Users
-from backend.resources.products.products import Products, ProductsLikes
-from backend.resources.users.users import Users
 
 app = Flask(__name__)
 CORS(app)
