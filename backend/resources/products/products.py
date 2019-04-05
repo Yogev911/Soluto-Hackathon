@@ -37,7 +37,7 @@ class Products(Resource):
         # return f_products[:amount] , 200
         data = json.loads(request.data)
         user_id = request.headers.get('user_id')
-        amount = data.get('amount', 0)
+        amount = data.get('amount', 50)
         user = db_client.get_user_by_id(user_id)
         products = db_client.get_products()
         unseen_products = []
