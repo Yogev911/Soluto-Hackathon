@@ -47,6 +47,14 @@ class DbClient:
     def update_product_state(self, product_id, state):
         self.products.update_one({'_id': ObjectId(product_id)}, {'sale_state': state})
 
+    def add_user(self, user_name, user_email, user_number, radius):
+        self.users.insert({'name': user_name, 'email': user_email, 'number': user_number,
+                           'likes': [], 'dislikes': [], 'location': [],
+                           'products': [], 'radius': radius})
+
+
+
+
 
 if __name__ == '__main__':
     db_client = DbClient()
