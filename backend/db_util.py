@@ -47,11 +47,11 @@ class DbClient:
     def update_product_state(self, product_id, state):
         self.products.update_one({'_id': ObjectId(product_id)}, {'sale_state': state})
 
-
-if __name__ == '__main__':
-    db_client = DbClient()
-    db_client.get_user_by_id("5ca6607ab7635f3de065ad63")
-    db_client.add_match(first_user='5ca66093b7635f3de065ad64', first_user_product_id='5ca662d6b7635f3de065ad6a', second_user="5ca6607ab7635f3de065ad63", second_user_product_id="5ca66431b7635f3de065ad74")
+#
+# if __name__ == '__main__':
+#     db_client = DbClient()
+#     db_client.get_user_by_id("5ca6607ab7635f3de065ad63")
+#     db_client.add_match(first_user='5ca66093b7635f3de065ad64', first_user_product_id='5ca662d6b7635f3de065ad6a', second_user="5ca6607ab7635f3de065ad63", second_user_product_id="5ca66431b7635f3de065ad74")
 
 # print(db_client.get_products())
 # print(db_client.get_user_by_email('amiravrm@gmail.com'))

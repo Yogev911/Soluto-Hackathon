@@ -2,7 +2,6 @@ import json
 from backend.db_util import DbClient
 from backend.utils import bson_to_json
 
-
 DB = DbClient()
 
 

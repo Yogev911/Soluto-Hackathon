@@ -18,7 +18,7 @@ class Match(Resource):
     @swagger.doc(products_post)
     def get(self):
         user_id = request.headers.get('user_id')
-        matches = db_client.get_matches(user_id)
+        matches = 3# db_client.get_matches(user_id)
         return json.dumps(json_util.dumps(matches)), 200
 
     @swagger.doc(products_post)
