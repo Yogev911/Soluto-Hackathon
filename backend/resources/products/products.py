@@ -31,10 +31,6 @@ class Products(Resource):
 
     @swagger.doc(products_post)
     def get(self):
-        # user = db_client.get_user_by_id(user_id)
-        # products_ids = [prod['id]'] for prod in db_client.get_products()]
-        # f_products = set(products_ids) - set(user['products']) - set(user['likes']) -set(user['dislikes'])
-        # return f_products[:amount] , 200
         data = json.loads(request.data)
         user_id = request.headers.get('user_id')
         amount = data.get('amount', 50)
