@@ -15,6 +15,8 @@ import Card from "../Card";
 import EmptyState from '../EmptyState';
 import { ProductService } from '../services/product-service'
 import Modal from "react-native-modal";
+import MatchDialog from '../components/match-dealog'
+import ImagePicker from 'react-native-image-picker';
 
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -27,11 +29,11 @@ export default class SwipePage extends React.Component {
         this.state = { 
             isLoading: true, 
             products: [],
-            isWon: false
+            matchedProduct: null
         };
         this.productService = new ProductService();
-        this.setWon = this.setWon.bind(this);
         this.closeWon = this.closeWon.bind(this);
+        this.showImagePicker = this.showImagePicker.bind(this);
 
     }
 
@@ -57,15 +59,9 @@ export default class SwipePage extends React.Component {
         this.fetchProducts();
     }
 
-    setWon() {
-        this.setState({
-            isWon: true
-        })
-    }
-
     closeWon() {
         this.setState({
-            isWon: false
+            matchedProduct: null
         })
     }
 
@@ -106,6 +102,9 @@ export default class SwipePage extends React.Component {
         }).start(this.onProductSwiped(this.state.products[activeIndex].id));
 
         this.productService.likeProduct(this.state.products[activeIndex].id);
+        this.setState({
+            matchedProduct: this.state.products[activeIndex]
+        })
     }
 
     renderProducts = (products) => {
@@ -122,6 +121,37 @@ export default class SwipePage extends React.Component {
 
     isEmptyState = () => {
         return this.state.products.findIndex(card => card.isActive) < 0;
+    }
+
+    showImagePicker() {
+        const options = {
+            title: 'Select Avatar',
+            customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const source = { uri: response.uri };
+
+                // You can also display the image using data:
+                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({
+                    avatarSource: source,
+                });
+            }
+        });
     }
 
     render() {
@@ -142,15 +172,13 @@ export default class SwipePage extends React.Component {
                         <TouchableOpacity style={styles.btn} onPress={() => this.handleNopeSelect()} >
                             <Image source={cancelIcon} style={styles.btnIcon} />
                         </TouchableOpacity>
-                        <Button title="won" onPress={this.setWon}></Button>
                     </View>
-                    <Modal isVisible={this.state.isWon} animationIn='flipInY'>
-                        <View style={{ flex: 1 }}>
-                            <Text>IT'S A MATCH!</Text>
-                            <TouchableOpacity onPress={this.closeWon}>
-                                <Text>Hide me!</Text>
-                            </TouchableOpacity>
-                        </View>
+                    <Button onPress={this.showImagePicker}></Button>
+                    <Modal 
+                        isVisible={this.state.matchedProduct != null} 
+                        animationIn='flipInY'
+                        backdropOpacity={0.3}>
+                        <MatchDialog product={this.state.matchedProduct} onClick={this.closeWon}></MatchDialog>
                     </Modal>
                 </View>
             );
