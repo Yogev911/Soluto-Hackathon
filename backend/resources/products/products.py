@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from flask_restful_swagger_2 import Resource, swagger
 from flask import request
@@ -12,7 +13,20 @@ db_client = DbClient()
 class Products(Resource):
     @swagger.doc(products_post)
     def post(self):
-        return f"ok", 200
+        user_id = request.headers.get('user_id')
+        product = {
+            "name": request.json["name"],
+            "catagory": request.json["catagory"],
+            "price": request.json["price"],
+            "desecription": request.json["desecription"],
+            "image_path": request.json["image_path"],
+            "condition": request.json["condition"],
+            "sale_status": request.json["sale_status"],
+            "post_date": datetime.datetime.now().isoformat(),
+            "liked": []
+        }
+        db_client.add_product(user_id, product)
+        return product
 
     @swagger.doc(products_post)
     def get(self):
